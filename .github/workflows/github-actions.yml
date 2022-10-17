@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build Docker image
-        run: docker build -t ${{ github.repository }} -f Dockerfile.dev .
+        run: docker build -t chrisplant45/docker-react -f Dockerfile.dev .
       - name: Run tests
-        run: docker run ${{ github.repository }} npm run test -- --coverage
+        run: docker run chrisplant45/docker-react npm run test -- --coverage
       - run: echo "This job's status is ${{ job.status }}."
