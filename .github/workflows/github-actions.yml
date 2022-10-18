@@ -21,7 +21,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
           aws-region: "eu-west-2"
 
-      - name: Upload package to new S3 bucket - updated permissions
+      - name: Upload package to new S3 bucket - updated permissions to AmazonS3FullAccess
         run: aws s3 cp deploy_package.zip s3://elasticbeanstalk-eu-west-2-971987890641/.elasticbeanstalk
 
       - name: Create new ElasticBeanstalk Application Version
