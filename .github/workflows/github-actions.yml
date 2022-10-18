@@ -1,12 +1,38 @@
 name: Udemy Docker and k8s
-on: [push]
+on:
+  push:
+    branches: [ master ]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Build Docker image
         run: docker build -t chrisplant45/docker-react -f Dockerfile.dev .
-      - name: Run tests
-        run: docker run chrisplant45/docker-react npm run test -- --coverage
+
+      - name: Create ZIP deployment package
+        run: zip -r deploy_package.zip ./
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
+          aws-region: "eu-west-2"
+
+      - name: Upload package to S3 bucket
+        run: aws s3 cp deploy_package.zip s3://elasticbeanstalk-eu-west-2-971987890641/.elasticbeanstalk
+
+      - name: Create new ElasticBeanstalk Application Version
+        run: |
+          aws elasticbeanstalk create-application-version \
+          --application-name docker-react \
+          --source-bundle S3Bucket="https://elasticbeanstalk-eu-west-2-971987890641.s3.eu-west-2.amazonaws.com/.elasticbeanstalk",S3Key="deploy_package.zip" \
+          --version-label "ver-${{ github.sha }}" \
+          --description "commit-sha-${{ github.sha }}"
+
+      - name: Deploy new ElasticBeanstalk Application Version
+        run: aws elasticbeanstalk update-environment --environment-name Dockerreact-env --version-label "ver-${{ github.sha }}"
+
       - run: echo "This job's status is ${{ job.status }}."
