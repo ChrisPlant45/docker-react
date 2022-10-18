@@ -22,13 +22,13 @@ jobs:
           aws-region: "eu-west-2"
 
       - name: Upload package to S3 bucket
-        run: aws s3 cp deploy_package.zip s3://elasticbeanstalk-eu-west-2-971987890641/.elasticbeanstalk
+        run: aws s3 cp deploy_package.zip s3://docker-react-github-deploy
 
       - name: Create new ElasticBeanstalk Application Version
         run: |
           aws elasticbeanstalk create-application-version \
           --application-name docker-react \
-          --source-bundle S3Bucket="s3://elasticbeanstalk-eu-west-2-971987890641/.elasticbeanstalk",S3Key="deploy_package.zip" \
+          --source-bundle S3Bucket="docker-react-github-deploy",S3Key="deploy_package.zip" \
           --version-label "ver-${{ github.sha }}" \
           --description "commit-sha-${{ github.sha }}"
 
