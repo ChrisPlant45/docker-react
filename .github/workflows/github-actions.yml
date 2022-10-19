@@ -26,8 +26,11 @@ jobs:
 
       - name: Create new ElasticBeanstalk Application Version
         run: |
-          aws elasticbeanstalk create-application-version --application-name docker-react \
-          --source-bundle S3Bucket="s3://elasticbeanstalk-eu-west-2-971987890641",S3Key="deploy_package.zip"
+          aws elasticbeanstalk create-application-version \
+          --application-name docker-react \
+          --source-bundle S3Bucket="s3://elasticbeanstalk-eu-west-2-971987890641",S3Key="deploy_package.zip" \
+          --version-label "ver-${{ github.sha }}" \
+          --description "commit-sha-${{ github.sha }}"
 
       - name: Deploy new ElasticBeanstalk Application Version
         run: aws elasticbeanstalk update-environment --environment-name Dockerreact-env --version-label "ver-${{ github.sha }}"
