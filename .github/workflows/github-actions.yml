@@ -22,13 +22,13 @@ jobs:
           aws-region: "eu-west-2"
 
       - name: Upload package to new S3 bucket - updated permissions to AmazonS3FullAccess
-        run: aws s3 cp deploy_package.zip s3://elasticbeanstalk-eu-west-2-971987890641
+        run: aws s3 cp deploy_package.zip s3://cpudenys3
 
       - name: Create new ElasticBeanstalk Application Version
         run: |
           aws elasticbeanstalk create-application-version \
           --application-name docker-react \
-          --source-bundle S3Bucket="s3://elasticbeanstalk-eu-west-2-971987890641",S3Key="deploy_package.zip" \
+          --source-bundle S3Bucket="s3://cpudemys3",S3Key="deploy_package.zip" \
           --version-label "ver-${{ github.sha }}" \
           --description "commit-sha-${{ github.sha }}"
 
